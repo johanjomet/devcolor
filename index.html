@@ -10,27 +10,27 @@
     
     <style>
         :root {
-            /* Core Colors */
-            --bg-main: #0a0a0a;
-            --bg-panel: #111111;
-            --bg-elevated: #1a1a1a;
-            --bg-hover: #222222;
+            /* Core Colors - Refined for Linear/Raycast aesthetic */
+            --bg-main: #000000;
+            --bg-panel: #0a0a0a;
+            --bg-elevated: #141414;
+            --bg-hover: #1f1f1f;
             
             /* Text Colors */
-            --text-primary: #ffffff;
-            --text-secondary: #a1a1aa;
-            --text-muted: #71717a;
+            --text-primary: #ededed;
+            --text-secondary: #888888;
+            --text-muted: #444444;
             
             /* Accents */
             --accent: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.2);
+            --accent-glow: rgba(59, 130, 246, 0.15);
             --border: rgba(255, 255, 255, 0.08);
             --border-hover: rgba(255, 255, 255, 0.15);
             
             /* Layout & Spacing */
             --radius-sm: 6px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
             --radius-full: 9999px;
             
             --spacing-1: 4px;
@@ -42,11 +42,31 @@
             
             /* Dynamic active color (updated via JS) */
             --active-color: #3b82f6;
+            --active-gradient: linear-gradient(90deg, #3b82f6, #8b5cf6);
             
             /* Transitions */
             --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
             --transition-fast: 0.15s var(--ease-out);
             --transition-normal: 0.3s var(--ease-out);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 50%);
         }
 
         * {
@@ -191,6 +211,36 @@
         .btn-icon {
             padding: var(--spacing-2);
             border-radius: var(--radius-md);
+            color: var(--text-secondary);
+        }
+
+        .btn-icon:hover {
+            color: var(--text-primary);
+            background: var(--bg-hover);
+        }
+
+        .btn-icon:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: var(--spacing-8);
+            align-items: start;
+            padding-bottom: var(--spacing-8);
+        }
+
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-6);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-6);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.02);
         }
 
         .workspace {
@@ -237,6 +287,9 @@
             transition: background 0.1s ease, box-shadow 0.1s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .color-sliders {
@@ -398,6 +451,8 @@
             display: flex;
             flex-direction: column;
             gap: var(--spacing-6);
+            position: sticky;
+            top: var(--spacing-6);
         }
         
         .preview-box {
@@ -408,6 +463,94 @@
             display: flex;
             flex-direction: column;
             gap: var(--spacing-4);
+        }
+
+        /* Live Preview Elements */
+        .preview-component {
+            background: var(--active-color);
+            color: #fff; /* Handled dynamically for contrast later */
+            padding: var(--spacing-3);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            font-weight: 500;
+            transition: background 0.1s ease, color 0.1s ease;
+            box-shadow: 0 2px 10px -2px var(--active-color);
+        }
+        
+        .preview-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--accent-glow);
+            color: var(--active-color);
+            border: 1px solid var(--active-color);
+        }
+
+        .preview-text {
+            color: var(--active-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+            transition: color 0.1s ease;
+        }
+
+        /* New Tool: Image Extractor */
+        .dropzone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-8);
+            text-align: center;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            background: var(--bg-elevated);
+        }
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--active-color);
+            color: var(--text-primary);
+            background: var(--accent-glow);
+        }
+        .extracted-colors {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: var(--spacing-2);
+            margin-top: var(--spacing-4);
+        }
+
+        /* New Tool: Gradient Builder */
+        .gradient-preview {
+            width: 100%;
+            height: 120px;
+            border-radius: var(--radius-md);
+            background: var(--active-gradient);
+            box-shadow: inset 0 0 0 1px var(--border);
+            margin-bottom: var(--spacing-4);
+        }
+
+        /* Accessibility: Color Blindness */
+        .cb-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-3);
+            margin-top: var(--spacing-4);
+        }
+        .cb-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: var(--spacing-2);
+            text-align: center;
+        }
+        .cb-swatch {
+            width: 100%;
+            height: 40px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+        }
+        .cb-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
         }
 
         .preview-component {
@@ -539,11 +682,15 @@
             <nav class="nav-tabs" id="mainNav">
                 <button class="nav-tab active" data-target="tool-picker">Picker</button>
                 <button class="nav-tab" data-target="tool-palette">Palette</button>
-                <button class="nav-tab" data-target="tool-contrast">Contrast</button>
+                <button class="nav-tab" data-target="tool-gradient">Gradient</button>
+                <button class="nav-tab" data-target="tool-image">Extract</button>
+                <button class="nav-tab" data-target="tool-contrast">A11y</button>
                 <button class="nav-tab" data-target="tool-export">Export</button>
             </nav>
 
             <div class="header-actions">
+                <button class="btn btn-icon" id="btnUndo" title="Undo (Ctrl+Z)" disabled><svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C20.32 11.41 16.82 8 12.5 8z"/></svg></button>
+                <button class="btn btn-icon" id="btnRedo" title="Redo (Ctrl+Y)" disabled><svg viewBox="0 0 24 24"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.32 0-7.82 3.41-8.97 7.72l2.37.78c1.05-3.19 4.06-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L14 16h9V7l-4.6 3.6z"/></svg></button>
                 <a href="#" class="btn btn-icon" title="View Source on GitHub">
                     <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
                 </a>
@@ -628,29 +775,87 @@
                                 <button class="copy-btn" data-copy="inpOklch"><svg viewBox="0 0 24 24"><path d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8C6.9 5 6 5.9 6 7v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
                             </div>
                         </div>
+                        <div class="input-group">
+                            <label>CMYK</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="inpCmyk" value="cmyk(76%, 47%, 0%, 4%)">
+                                <button class="copy-btn" data-copy="inpCmyk"><svg viewBox="0 0 24 24"><path d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8C6.9 5 6 5.9 6 7v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Palette Tool -->
                 <div class="panel tool-panel hidden" id="tool-palette">
                     <div class="panel-header">
-                        <h2 class="panel-title">Palette Generator</h2>
-                        <select id="selPaletteType" style="background:var(--bg-elevated); color:var(--text-primary); border:1px solid var(--border); padding:4px 8px; border-radius:4px; font-family:inherit;">
-                            <option value="analogous">Analogous</option>
-                            <option value="monochromatic">Monochromatic</option>
-                            <option value="complementary">Complementary</option>
-                            <option value="triadic">Triadic</option>
+                        <h2 class="panel-title">Smart Palette Generator</h2>
+                        <select id="selPaletteType" style="background:var(--bg-elevated); color:var(--text-primary); border:1px solid var(--border); padding:6px 10px; border-radius:var(--radius-sm); font-family:inherit; outline:none;">
+                            <optgroup label="Classic Harmony">
+                                <option value="analogous">Analogous</option>
+                                <option value="monochromatic">Monochromatic</option>
+                                <option value="complementary">Complementary</option>
+                                <option value="triadic">Triadic</option>
+                            </optgroup>
+                            <optgroup label="Smart Themes">
+                                <option value="cyberpunk">Cyberpunk</option>
+                                <option value="nature">Nature / Earth</option>
+                                <option value="pastel">Pastel Dream</option>
+                            </optgroup>
                         </select>
                     </div>
                     
                     <div class="palette-grid" id="paletteGrid">
                         <!-- Swatches injected via JS -->
                     </div>
-                    <p style="font-size:0.875rem; color:var(--text-secondary); text-align:center;">Click a color to set as active</p>
+                    <p style="font-size:0.875rem; color:var(--text-secondary); text-align:center;">Click any swatch to load it into the workspace</p>
                 </div>
 
+                <!-- Gradient Tool -->
+                <div class="panel tool-panel hidden" id="tool-gradient">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Gradient Builder</h2>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn btn-icon" id="btnReverseGrad" title="Reverse Gradient"><svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm-8 8c0-1.01.25-1.97.7-2.8L3.24 7.74A7.93 7.93 0 002 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6z"/></svg></button>
+                        </div>
+                    </div>
+                    
+                    <div class="gradient-preview" id="gradPreview"></div>
+                    
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span>Angle</span>
+                            <span id="lblGradAngle">90°</span>
+                        </div>
+                        <input type="range" id="slGradAngle" min="0" max="360" value="90">
+                    </div>
+
+                    <div class="input-group" style="margin-top:var(--spacing-4);">
+                        <label>CSS Background</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="inpGradCss" readonly>
+                            <button class="copy-btn" data-copy="inpGradCss"><svg viewBox="0 0 24 24"><path d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8C6.9 5 6 5.9 6 7v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Extractor Tool -->
+                <div class="panel tool-panel hidden" id="tool-image">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Image Color Extractor</h2>
+                    </div>
+                    <div class="dropzone" id="imageDropzone">
+                        <svg style="width:48px; height:48px; margin-bottom:12px; color:var(--text-muted);" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7l3-4 2 3 3-4 4 5h-5z"/></svg>
+                        <p>Drag & Drop an image here<br><span style="font-size:0.875rem;">or click to browse</span></p>
+                        <input type="file" id="fileInput" accept="image/*" style="display:none;">
+                    </div>
+                    <canvas id="imgCanvas" style="display:none;"></canvas>
+                    <div id="extractedColors" class="extracted-colors"></div>
+                </div>
+
+                <!-- Contrast / A11y Tool -->
                 <div class="panel tool-panel hidden" id="tool-contrast">
                     <div class="panel-header">
-                        <h2 class="panel-title">Contrast Checker</h2>
+                        <h2 class="panel-title">Accessibility & Contrast</h2>
                     </div>
                     
                     <div style="background: #ffffff; color: var(--active-color); padding: var(--spacing-6); border-radius: var(--radius-md); text-align:center; transition: all 0.2s ease;" id="contrastPreviewArea">
@@ -664,8 +869,68 @@
                             <div class="contrast-ratio" id="valRatio">--</div>
                         </div>
                         <div class="contrast-card">
-                            <div style="font-size:0.875rem; color:var(--text-secondary);">WCAG AA Normal Text</div>
+                            <div style="font-size:0.875rem; color:var(--text-secondary);">WCAG AAA (Large)</div>
                             <div class="contrast-ratio" id="valWCAG">--</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: 1px solid var(--border);">
+                        <h3 style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:var(--spacing-2);">Color Blindness Simulation</h3>
+                        <div class="cb-grid">
+                            <div class="cb-card">
+                                <div class="cb-swatch" id="cbProtanopia"></div>
+                                <span class="cb-label">Protanopia<br>(Red-Blind)</span>
+                            </div>
+                            <div class="cb-card">
+                                <div class="cb-swatch" id="cbDeuteranopia"></div>
+                                <span class="cb-label">Deuteranopia<br>(Green-Blind)</span>
+                            </div>
+                            <div class="cb-card">
+                                <div class="cb-swatch" id="cbTritanopia"></div>
+                                <span class="cb-label">Tritanopia<br>(Blue-Blind)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Tool -->
+                <div class="panel tool-panel hidden" id="tool-export">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Developer Export</h2>
+                        <select id="selExportType" style="background:var(--bg-elevated); color:var(--text-primary); border:1px solid var(--border); padding:6px 10px; border-radius:var(--radius-sm); font-family:inherit; outline:none;">
+                            <option value="css">CSS Variables</option>
+                            <option value="tailwind">Tailwind Config</option>
+                            <option value="json">JSON Tokens</option>
+                            <option value="scss">SCSS Variables</option>
+                        </select>
+                    </div>
+                    <div class="input-wrapper" style="margin-top: var(--spacing-4);">
+                        <textarea id="exportArea" rows="10" readonly style="width:100%; background:var(--bg-elevated); border:1px solid var(--border); color:var(--text-primary); padding:var(--spacing-3); border-radius:var(--radius-md); font-family:'Fira Code', monospace; font-size: 0.875rem; resize:none; line-height:1.6;"></textarea>
+                        <button class="copy-btn" id="btnCopyExport" style="top:8px; right:8px;"><svg viewBox="0 0 24 24"><path d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8C6.9 5 6 5.9 6 7v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
+                    </div>
+                </div>
+
+            </div>
+
+            <aside class="sidebar">
+                
+                <div class="panel">
+                    <h3 class="panel-title" style="margin-bottom:var(--spacing-2);">Component Preview</h3>
+                    <div class="preview-box">
+                        <button class="preview-component" style="border:none; cursor:pointer;" id="btnPreview">Primary Button</button>
+                        
+                        <div style="display:flex; gap:8px;">
+                            <div class="preview-component" style="flex:1; background:transparent; border:1px solid var(--active-color); color:var(--active-color);">Outline</div>
+                            <div class="preview-component" style="flex:1; background:var(--accent-glow); color:var(--active-color);">Soft Fill</div>
+                        </div>
+
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:4px 0;">
+                            <span class="preview-text" style="font-size:1rem;">Header Text</span>
+                            <span class="preview-badge">New Feature</span>
+                        </div>
+
+                        <div style="background:var(--bg-main); padding:var(--spacing-3); border-radius:var(--radius-sm); border:1px solid var(--border); border-left: 3px solid var(--active-color);">
+                            <p style="font-size:0.8rem; color:var(--text-secondary);">Alert description using brand accent.</p>
                         </div>
                     </div>
                 </div>
@@ -743,14 +1008,31 @@
             rgbToHex: (r, g, b) => {
                 return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1).toUpperCase();
             },
+            rgbaToHex8: (r, g, b, a) => {
+                const alpha = Math.round(a * 255);
+                return "#" + (1 << 32 | r << 24 | g << 16 | b << 8 | alpha).toString(16).slice(1).toUpperCase();
+            },
             hexToRgb: (hex) => {
                 let c = hex.replace('#', '');
                 if (c.length === 3) c = c.split('').map(x => x + x).join('');
+                if (c.length === 8) c = c.slice(0, 6); // Ignore alpha for pure RGB math
                 const num = parseInt(c, 16);
                 return [num >> 16, (num >> 8) & 255, num & 255];
             },
-            // Simplified OKLCH approximation for display purposes
+            rgbToCmyk: (r, g, b) => {
+                let c = 1 - (r / 255);
+                let m = 1 - (g / 255);
+                let y = 1 - (b / 255);
+                let k = Math.min(c, Math.min(m, y));
+                if (k === 1) return [0, 0, 0, 100];
+                c = Math.round((c - k) / (1 - k) * 100);
+                m = Math.round((m - k) / (1 - k) * 100);
+                y = Math.round((y - k) / (1 - k) * 100);
+                k = Math.round(k * 100);
+                return [c, m, y, k];
+            },
             rgbToOklchStr: (r, g, b) => {
+                // Simplified OKLCH approximation for display
                 return `oklch(${(Math.max(r,g,b)/255*100).toFixed(0)}% 0.1 ${(r+g+b)%360})`; 
             },
             getLuminance: (r, g, b) => {
@@ -766,14 +1048,30 @@
                 const brightest = Math.max(lum1, lum2);
                 const darkest = Math.min(lum1, lum2);
                 return (brightest + 0.05) / (darkest + 0.05);
+            },
+            // Color Blindness Simulation Matrices (simplified approximation)
+            simulateBlindness: (r, g, b, type) => {
+                let matrix;
+                if(type === 'protanopia') matrix = [[0.567, 0.433, 0], [0.558, 0.442, 0], [0, 0.242, 0.758]];
+                else if(type === 'deuteranopia') matrix = [[0.625, 0.375, 0], [0.7, 0.3, 0], [0, 0.3, 0.7]];
+                else if(type === 'tritanopia') matrix = [[0.95, 0.05, 0], [0, 0.433, 0.567], [0, 0.475, 0.525]];
+                
+                const nr = Math.min(255, Math.max(0, r*matrix[0][0] + g*matrix[0][1] + b*matrix[0][2]));
+                const ng = Math.min(255, Math.max(0, r*matrix[1][0] + g*matrix[1][1] + b*matrix[1][2]));
+                const nb = Math.min(255, Math.max(0, r*matrix[2][0] + g*matrix[2][1] + b*matrix[2][2]));
+                return [Math.round(nr), Math.round(ng), Math.round(nb)];
             }
         };
 
         // --- STREAMING_CHUNK:State Management ---
         const State = {
             color: { h: 217, s: 91, l: 60, a: 1 }, // Single source of truth (HSLA)
+            gradient: { angle: 90, color2: { h: 260, s: 80, l: 60 } },
             savedColors: JSON.parse(localStorage.getItem('devcolor_saved')) || [],
+            history: [],
+            historyIndex: -1,
             listeners: [],
+            isInternalUpdate: false,
             
             subscribe(listener) {
                 this.listeners.push(listener);
@@ -783,9 +1081,51 @@
                 this.listeners.forEach(fn => fn(this.color));
             },
             
-            updateColor(updates) {
-                this.color = { ...this.color, ...updates };
+            updateColor(updates, recordHistory = true) {
+                const newColor = { ...this.color, ...updates };
+                
+                // Don't record if identical
+                if (JSON.stringify(newColor) === JSON.stringify(this.color)) return;
+
+                if (recordHistory && !this.isInternalUpdate) {
+                    // Truncate future history if we're in middle of stack
+                    this.history = this.history.slice(0, this.historyIndex + 1);
+                    this.history.push({ ...this.color });
+                    if (this.history.length > 50) this.history.shift(); // Max 50 undos
+                    this.historyIndex = this.history.length - 1;
+                    UI.updateUndoRedoButtons();
+                }
+
+                this.color = newColor;
                 this.notify();
+            },
+
+            undo() {
+                if (this.historyIndex >= 0) {
+                    this.isInternalUpdate = true;
+                    // Push current to redo stack conceptually by moving index back
+                    if (this.historyIndex === this.history.length - 1) {
+                        this.history.push({ ...this.color }); // Save current state before going back
+                    }
+                    const prevColor = this.history[this.historyIndex];
+                    this.historyIndex--;
+                    this.color = { ...prevColor };
+                    this.notify();
+                    UI.updateUndoRedoButtons();
+                    this.isInternalUpdate = false;
+                }
+            },
+
+            redo() {
+                if (this.historyIndex < this.history.length - 2) {
+                    this.isInternalUpdate = true;
+                    this.historyIndex++;
+                    const nextColor = this.history[this.historyIndex + 1];
+                    this.color = { ...nextColor };
+                    this.notify();
+                    UI.updateUndoRedoButtons();
+                    this.isInternalUpdate = false;
+                }
             },
             
             saveCurrentColor() {
@@ -809,8 +1149,8 @@
             randomize() {
                 this.updateColor({
                     h: Math.floor(Math.random() * 360),
-                    s: Math.floor(Math.random() * 50) + 50, // 50-100% for vividness
-                    l: Math.floor(Math.random() * 40) + 30, // 30-70% for visibility
+                    s: Math.floor(Math.random() * 50) + 50,
+                    l: Math.floor(Math.random() * 40) + 30,
                     a: 1
                 });
             }
@@ -823,6 +1163,7 @@
                 this.bindEvents();
                 State.subscribe(this.render.bind(this));
                 this.renderSavedColors();
+                this.updateUndoRedoButtons();
                 State.notify(); // Initial render
             },
 
@@ -844,6 +1185,7 @@
                 this.inpRgb = document.getElementById('inpRgb');
                 this.inpHsl = document.getElementById('inpHsl');
                 this.inpOklch = document.getElementById('inpOklch');
+                this.inpCmyk = document.getElementById('inpCmyk');
                 
                 // Areas
                 this.mainPreview = document.getElementById('mainPreview');
@@ -853,28 +1195,36 @@
                 // Tabs
                 this.navTabs = document.querySelectorAll('.nav-tab');
                 this.toolPanels = document.querySelectorAll('.tool-panel');
+
+                // Buttons
+                this.btnUndo = document.getElementById('btnUndo');
+                this.btnRedo = document.getElementById('btnRedo');
             },
 
             bindEvents() {
-                // Slider inputs
-                const updateFromSliders = () => {
+                // Slider inputs (debounce history recording)
+                let sliderTimeout;
+                const updateFromSliders = (record = false) => {
                     State.updateColor({
                         h: parseInt(this.slHue.value),
                         s: parseInt(this.slSat.value),
                         l: parseInt(this.slLit.value),
                         a: parseInt(this.slAlpha.value) / 100
-                    });
+                    }, record);
                 };
                 
-                this.slHue.addEventListener('input', updateFromSliders);
-                this.slSat.addEventListener('input', updateFromSliders);
-                this.slLit.addEventListener('input', updateFromSliders);
-                this.slAlpha.addEventListener('input', updateFromSliders);
+                const onSliderInput = () => updateFromSliders(false);
+                const onSliderChange = () => updateFromSliders(true);
+
+                ['slHue', 'slSat', 'slLit', 'slAlpha'].forEach(id => {
+                    this[id].addEventListener('input', onSliderInput);
+                    this[id].addEventListener('change', onSliderChange);
+                });
 
                 // HEX input parsing
                 this.inpHex.addEventListener('change', (e) => {
                     let val = e.target.value;
-                    if(/^#?([0-9A-Fa-f]{3}){1,2}$/.test(val)) {
+                    if(/^#?([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(val)) {
                         const rgb = ColorMath.hexToRgb(val);
                         const hsl = ColorMath.rgbToHsl(rgb[0], rgb[1], rgb[2]);
                         State.updateColor({h: hsl[0], s: hsl[1], l: hsl[2]});
@@ -892,19 +1242,52 @@
                         // Re-trigger specific renders if needed
                         if(e.target.dataset.target === 'tool-palette') this.renderPalette();
                         if(e.target.dataset.target === 'tool-export') this.renderExport();
+                        if(e.target.dataset.target === 'tool-gradient') this.renderGradient();
                     });
                 });
 
-                // Palette Type
+                // Selects
                 document.getElementById('selPaletteType').addEventListener('change', () => this.renderPalette());
+                document.getElementById('selExportType').addEventListener('change', () => this.renderExport());
+
+                // Gradient specific
+                document.getElementById('slGradAngle').addEventListener('input', (e) => {
+                    State.gradient.angle = e.target.value;
+                    document.getElementById('lblGradAngle').textContent = `${e.target.value}°`;
+                    this.renderGradient();
+                });
+                document.getElementById('btnReverseGrad').addEventListener('click', () => {
+                    State.gradient.angle = (parseInt(State.gradient.angle) + 180) % 360;
+                    document.getElementById('slGradAngle').value = State.gradient.angle;
+                    document.getElementById('lblGradAngle').textContent = `${State.gradient.angle}°`;
+                    this.renderGradient();
+                });
+
+                // Image Extractor
+                const dropzone = document.getElementById('imageDropzone');
+                const fileInput = document.getElementById('fileInput');
+
+                dropzone.addEventListener('click', () => fileInput.click());
+                dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+                dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+                dropzone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('dragover');
+                    if(e.dataTransfer.files && e.dataTransfer.files[0]) this.handleImageExtraction(e.dataTransfer.files[0]);
+                });
+                fileInput.addEventListener('change', (e) => {
+                    if(e.target.files && e.target.files[0]) this.handleImageExtraction(e.target.files[0]);
+                });
 
                 // Global Actions
-                document.getElementById('btnRandom').addEventListener('click', () => State.randomize());
+                document.getElementById('btnUndo').addEventListener('click', () => State.undo());
+                document.getElementById('btnRedo').addEventListener('click', () => State.redo());
                 document.getElementById('btnSaveColor').addEventListener('click', () => State.saveCurrentColor());
                 document.getElementById('btnClearSaved').addEventListener('click', () => State.clearSaved());
 
                 // Copy Buttons
                 document.querySelectorAll('.copy-btn').forEach(btn => {
+                    if(btn.id === 'btnCopyExport') return; // Handled separately
                     btn.addEventListener('click', (e) => {
                         const targetId = e.currentTarget.dataset.copy;
                         const input = document.getElementById(targetId);
@@ -927,16 +1310,29 @@
                     } else if (e.code === 'KeyC' && (e.ctrlKey || e.metaKey)) {
                         e.preventDefault();
                         this.copyToClipboard(this.inpHex.value);
+                    } else if (e.code === 'KeyZ' && (e.ctrlKey || e.metaKey)) {
+                        e.preventDefault();
+                        State.undo();
+                    } else if (e.code === 'KeyY' && (e.ctrlKey || e.metaKey)) {
+                        e.preventDefault();
+                        State.redo();
                     }
                 });
+            },
+
+            updateUndoRedoButtons() {
+                this.btnUndo.disabled = State.historyIndex < 0;
+                this.btnRedo.disabled = State.historyIndex >= State.history.length - 2;
             },
 
             // --- STREAMING_CHUNK:Reactive UI Rendering ---
             render(color) {
                 const rgb = ColorMath.hslToRgb(color.h, color.s, color.l);
-                const hex = ColorMath.rgbToHex(rgb[0], rgb[1], rgb[2]);
+                const hex = color.a < 1 ? ColorMath.rgbaToHex8(rgb[0], rgb[1], rgb[2], color.a) : ColorMath.rgbToHex(rgb[0], rgb[1], rgb[2]);
                 const rgbaStr = color.a < 1 ? `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${color.a})` : `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
                 const hslaStr = color.a < 1 ? `hsla(${color.h}, ${color.s}%, ${color.l}%, ${color.a})` : `hsl(${color.h}, ${color.s}%, ${color.l}%)`;
+                const cmyk = ColorMath.rgbToCmyk(rgb[0], rgb[1], rgb[2]);
+                const cmykStr = `cmyk(${cmyk[0]}%, ${cmyk[1]}%, ${cmyk[2]}%, ${cmyk[3]}%)`;
                 
                 // Update Sliders without triggering change events
                 if (document.activeElement !== this.slHue) this.slHue.value = color.h;
@@ -955,6 +1351,7 @@
                 if (document.activeElement !== this.inpRgb) this.inpRgb.value = rgbaStr;
                 if (document.activeElement !== this.inpHsl) this.inpHsl.value = hslaStr;
                 if (document.activeElement !== this.inpOklch) this.inpOklch.value = ColorMath.rgbToOklchStr(rgb[0],rgb[1],rgb[2]);
+                if (document.activeElement !== this.inpCmyk) this.inpCmyk.value = cmykStr;
 
                 // CSS Variables & Previews
                 const cssColor = color.a < 1 ? rgbaStr : hex;
@@ -968,6 +1365,7 @@
                 if (!document.getElementById('tool-palette').classList.contains('hidden')) this.renderPalette();
                 if (!document.getElementById('tool-contrast').classList.contains('hidden')) this.renderContrast(rgb, hex);
                 if (!document.getElementById('tool-export').classList.contains('hidden')) this.renderExport();
+                if (!document.getElementById('tool-gradient').classList.contains('hidden')) this.renderGradient();
                 
                 // Adjust preview component text color for accessibility
                 const isLight = ColorMath.getLuminance(rgb[0], rgb[1], rgb[2]) > 0.5;
@@ -979,26 +1377,49 @@
                 const type = document.getElementById('selPaletteType').value;
                 const {h, s, l} = State.color;
                 let hues = [];
+                let sats = [];
+                let lits = [];
 
+                // Smart Theme generation logic
                 switch(type) {
-                    case 'analogous': hues = [h-30, h-15, h, h+15, h+30]; break;
-                    case 'monochromatic': hues = [h, h, h, h, h]; break; // Will vary L later
-                    case 'complementary': hues = [h, h, (h+180)%360, (h+180)%360, (h+180)%360]; break;
-                    case 'triadic': hues = [h, (h+120)%360, (h+120)%360, (h+240)%360, (h+240)%360]; break;
+                    case 'analogous': 
+                        hues = [h-30, h-15, h, h+15, h+30]; 
+                        break;
+                    case 'monochromatic': 
+                        hues = [h, h, h, h, h]; 
+                        lits = [Math.max(10, l-40), Math.max(20, l-20), l, Math.min(80, l+20), Math.min(95, l+40)];
+                        break;
+                    case 'complementary': 
+                        hues = [h, h, (h+180)%360, (h+180)%360, (h+180)%360]; 
+                        lits = [l, Math.max(20, l-20), l, Math.min(80, l+20), Math.max(10, l-40)];
+                        break;
+                    case 'triadic': 
+                        hues = [h, (h+120)%360, (h+120)%360, (h+240)%360, (h+240)%360]; 
+                        break;
+                    case 'cyberpunk':
+                        hues = [315, 290, h, 180, 60]; // Pink, Purple, User, Cyan, Yellow
+                        sats = [100, 90, s, 100, 100];
+                        lits = [50, 40, l, 50, 50];
+                        break;
+                    case 'nature':
+                        hues = [120, 90, h, 30, 45]; // Greens, Browns
+                        sats = [40, 50, s, 60, 40];
+                        lits = [30, 40, l, 30, 80];
+                        break;
+                    case 'pastel':
+                        hues = [h-40, h-20, h, h+20, h+40];
+                        sats = [70, 70, 70, 70, 70];
+                        lits = [85, 85, 85, 85, 85];
+                        break;
                 }
 
                 this.paletteGrid.innerHTML = '';
                 hues.forEach((hueValue, i) => {
                     let adjustedH = (hueValue + 360) % 360;
-                    let adjustedL = l;
-                    if(type === 'monochromatic') {
-                        adjustedL = Math.max(10, Math.min(90, l + (i-2)*15));
-                    }
-                    if(type === 'complementary' || type === 'triadic') {
-                         adjustedL = Math.max(10, Math.min(90, l + (i%2===0?10:-10)));
-                    }
+                    let adjustedS = sats.length ? sats[i] : s;
+                    let adjustedL = lits.length ? lits[i] : l;
 
-                    const rgb = ColorMath.hslToRgb(adjustedH, s, adjustedL);
+                    const rgb = ColorMath.hslToRgb(adjustedH, adjustedS, adjustedL);
                     const hex = ColorMath.rgbToHex(rgb[0], rgb[1], rgb[2]);
                     
                     const swatch = document.createElement('div');
@@ -1015,6 +1436,22 @@
                 });
             },
 
+            renderGradient() {
+                const color1 = State.color;
+                const color2 = State.gradient.color2; // In a full version, we'd allow editing this second color
+                
+                const rgb1 = ColorMath.hslToRgb(color1.h, color1.s, color1.l);
+                const rgb2 = ColorMath.hslToRgb(color2.h, color2.s, color2.l);
+                
+                const hex1 = ColorMath.rgbToHex(rgb1[0], rgb1[1], rgb1[2]);
+                const hex2 = ColorMath.rgbToHex(rgb2[0], rgb2[1], rgb2[2]);
+                
+                const cssGrad = `linear-gradient(${State.gradient.angle}deg, ${hex1} 0%, ${hex2} 100%)`;
+                
+                this.root.style.setProperty('--active-gradient', cssGrad);
+                document.getElementById('inpGradCss').value = `background: ${cssGrad};`;
+            },
+
             renderContrast(rgb, hex) {
                 const bgRgb = [255, 255, 255]; // Comparing against white
                 const ratio = ColorMath.getContrastRatio(rgb, bgRgb);
@@ -1022,44 +1459,106 @@
                 document.getElementById('valRatio').textContent = ratio.toFixed(2) + ':1';
                 
                 const wcagElem = document.getElementById('valWCAG');
-                if(ratio >= 4.5) {
+                if(ratio >= 7) {
+                    wcagElem.textContent = "Pass (AAA)";
+                    wcagElem.className = "contrast-ratio contrast-pass";
+                } else if(ratio >= 4.5) {
                     wcagElem.textContent = "Pass (AA)";
                     wcagElem.className = "contrast-ratio contrast-pass";
                 } else {
                     wcagElem.textContent = "Fail";
                     wcagElem.className = "contrast-ratio contrast-fail";
                 }
+
+                // Color Blindness previews
+                const types = ['protanopia', 'deuteranopia', 'tritanopia'];
+                types.forEach(type => {
+                    const simRgb = ColorMath.simulateBlindness(rgb[0], rgb[1], rgb[2], type);
+                    const simHex = ColorMath.rgbToHex(simRgb[0], simRgb[1], simRgb[2]);
+                    document.getElementById(`cb${type.charAt(0).toUpperCase() + type.slice(1)}`).style.backgroundColor = simHex;
+                });
             },
 
             renderExport() {
+                const type = document.getElementById('selExportType').value;
                 const rgb = ColorMath.hslToRgb(State.color.h, State.color.s, State.color.l);
                 const hex = ColorMath.rgbToHex(rgb[0], rgb[1], rgb[2]);
-                const css = `:root {\n  --primary: ${hex};\n  --primary-rgb: ${rgb[0]}, ${rgb[1]}, ${rgb[2]};\n}\n\n/* Tailwind Config */\ncolors: {\n  primary: '${hex}'\n}`;
-                document.getElementById('exportArea').value = css;
+                let output = "";
+
+                if (type === 'css') {
+                    output = `:root {\n  --brand-primary: ${hex};\n  --brand-rgb: ${rgb[0]}, ${rgb[1]}, ${rgb[2]};\n}`;
+                } else if (type === 'tailwind') {
+                    output = `module.exports = {\n  theme: {\n    extend: {\n      colors: {\n        brand: {\n          DEFAULT: '${hex}',\n        }\n      }\n    }\n  }\n}`;
+                } else if (type === 'json') {
+                    output = `{\n  "brand": {\n    "primary": {\n      "value": "${hex}",\n      "type": "color"\n    }\n  }\n}`;
+                } else if (type === 'scss') {
+                    output = `$brand-primary: ${hex};\n$brand-rgb: rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 1);`;
+                }
+                
+                document.getElementById('exportArea').value = output;
             },
 
-            renderSavedColors() {
-                const grid = document.getElementById('savedGrid');
-                const msg = document.getElementById('emptySavedMsg');
-                grid.innerHTML = '';
+            // --- STREAMING_CHUNK:Image Extraction ---
+            handleImageExtraction(file) {
+                if (!file.type.startsWith('image/')) return this.showToast("Please drop a valid image file.", "error");
                 
-                if (State.savedColors.length === 0) {
-                    msg.style.display = 'block';
-                } else {
-                    msg.style.display = 'none';
-                    State.savedColors.forEach(hex => {
-                        const swatch = document.createElement('div');
-                        swatch.className = 'saved-swatch';
-                        swatch.style.backgroundColor = hex;
-                        swatch.title = hex;
-                        swatch.addEventListener('click', () => {
-                            const rgb = ColorMath.hexToRgb(hex);
-                            const hsl = ColorMath.rgbToHsl(rgb[0], rgb[1], rgb[2]);
-                            State.updateColor({h: hsl[0], s: hsl[1], l: hsl[2], a: 1});
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.getElementById('imgCanvas');
+                        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                        // Scale down for performance
+                        const MAX_SIZE = 200;
+                        let w = img.width, h = img.height;
+                        if (w > MAX_SIZE || h > MAX_SIZE) {
+                            const ratio = Math.min(MAX_SIZE/w, MAX_SIZE/h);
+                            w *= ratio; h *= ratio;
+                        }
+                        canvas.width = w; canvas.height = h;
+                        ctx.drawImage(img, 0, 0, w, h);
+                        
+                        // Simple binning extraction (for speed)
+                        const data = ctx.getImageData(0, 0, w, h).data;
+                        const colorCounts = {};
+                        for (let i = 0; i < data.length; i += 16) { // Skip pixels for speed
+                            const r = Math.round(data[i] / 24) * 24;
+                            const g = Math.round(data[i+1] / 24) * 24;
+                            const b = Math.round(data[i+2] / 24) * 24;
+                            if (data[i+3] < 128) continue; // ignore transparent
+                            const rgb = `${r},${g},${b}`;
+                            colorCounts[rgb] = (colorCounts[rgb] || 0) + 1;
+                        }
+                        
+                        // Sort by frequency
+                        const sortedColors = Object.entries(colorCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
+                        
+                        const container = document.getElementById('extractedColors');
+                        container.innerHTML = '';
+                        document.getElementById('imageDropzone').style.padding = "var(--spacing-4)";
+                        
+                        sortedColors.forEach(([rgbStr]) => {
+                            const [r,g,b] = rgbStr.split(',').map(Number);
+                            const hex = ColorMath.rgbToHex(r,g,b);
+                            const swatch = document.createElement('div');
+                            swatch.className = 'palette-swatch';
+                            swatch.style.height = '60px';
+                            swatch.style.backgroundColor = hex;
+                            swatch.style.borderRadius = 'var(--radius-sm)';
+                            swatch.title = hex;
+                            
+                            swatch.addEventListener('click', () => {
+                                const hsl = ColorMath.rgbToHsl(r,g,b);
+                                State.updateColor({h: hsl[0], s: hsl[1], l: hsl[2], a: 1});
+                            });
+                            
+                            container.appendChild(swatch);
                         });
-                        grid.appendChild(swatch);
-                    });
-                }
+                        this.showToast("Colors extracted!", "success");
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
             },
 
             // --- STREAMING_CHUNK:Utilities ---
